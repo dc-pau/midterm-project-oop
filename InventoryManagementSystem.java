@@ -1,5 +1,50 @@
 import java.util.Scanner;
 
+//abstract class
+abstract class AbstractItems{
+  private String id;
+  private String name;
+  private int qty;
+  private double price;
+
+  //constructor
+  public AbstractItems(String id, String name, int qty, double price){
+    this.id = id;
+    this.name = name;
+    this.qty = qty;
+    this.price = price;
+  }
+
+}
+
+//clothing class
+class Clothing extends AbstractItems{
+
+  //constructor
+  public Clothing(String id, String name, int qty, double price){
+    super(id, name, qty, price);
+  }
+}
+
+//electronics class
+class Electronics extends AbstractItems{
+
+  //constructor
+  public Electronics(String id, String name, int qty, double price){
+    super(id, name, qty, price);
+  }
+}
+
+//entertainment class
+class Entertainment extends AbstractItems{
+
+  //constructor
+  public Entertainment(String id, String name, int qty, double price){
+    super(id, name, qty, price);
+  }
+
+}
+
 public class InventoryManagementSystem{
   public static Scanner input = new Scanner(System.in);
   public static void main(String[] args){
