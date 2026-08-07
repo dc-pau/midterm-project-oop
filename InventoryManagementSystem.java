@@ -15,6 +15,32 @@ abstract class AbstractItems{
     this.price = price;
   }
 
+  //getters
+  public String getId(){
+    return this.id;
+  }
+
+  public String getName(){
+    return this.name;
+  }
+
+  public int getQty(){
+    return this.qty;
+  }
+
+  public double getPrice(){
+    return this.price;
+  }
+
+  //setters
+  public void setQty(int qty){
+    this.qty = qty;
+  }
+
+  public void setPrice(double price){
+    this.price = price;
+  }
+  
 }
 
 //clothing class
