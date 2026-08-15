@@ -166,7 +166,7 @@ public class InventoryManagementSystem{
 
   public static String idValidation(String prompt, String id, String regex){
     if(!id.matches(regex)){
-      System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
+      System.out.println("Invalid id format. Please use this format instead: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
       id = stringEmptyChecker(prompt, regex, 1);
     }else{
       return id;
@@ -241,66 +241,55 @@ public class InventoryManagementSystem{
     return price;
   }
   public static void addItemMain(Inventory inventory){
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                            ADD ITEM");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          
-          System.out.println("\n                                          ITEM CATEGORY");
-          System.out.println("                                - - - - - - - - - - - - - - - -");
-          System.out.println("""
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                            ADD ITEM");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    
+    System.out.println("\n                                          ITEM CATEGORY");
+    System.out.println("                                - - - - - - - - - - - - - - - -");
+    System.out.println("""
 
-                                   Clothing                         Electronics                   Entertainment
-                        """);
-          System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
-          String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
+                              Clothing                         Electronics                   Entertainment
+                  """);
+    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+    String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
 
-          while(inventory.isCatExists(itemCat)){
-            System.out.println(itemCat + " Category is found!");
-            System.out.println("\nPlease enter necessary information about the item:");
-            System.out.println("NOTE: For ID format: First Two letter of the Category (C/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
-            if(itemCat.equalsIgnoreCase("clothing")){
-              //check if ID exist before continuing
-              String cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
-              String cName = stringEmptyChecker("Enter Name: ", null, 0);
-              int cQty = qtyValidation("Enter Quantity: ");
-              double cPrice = priceValidation("Enter Price: ");
-              
-              AbstractItems newAbstractItems = addAbstractItem(itemCat, cID, cName, cQty, cPrice);
-              inventory.addItem(newAbstractItems, cID);
-            }else if(itemCat.equalsIgnoreCase("electronic")){
-              //check if ID exist before continuing
-              String elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
-              String elName = stringEmptyChecker("Enter Name: ", null, 0);
-              int elQty = qtyValidation("Enter Quantity: ");
-              double elPrice = priceValidation("Enter Price: ");
-              
-              AbstractItems newAbstractItems = addAbstractItem(itemCat, elID, elName, elQty, elPrice);
-              inventory.addItem(newAbstractItems, elID);
-            }else{
-              //check if ID exist before continuing
-              String enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
-              String enName = stringEmptyChecker("Enter Name: ", null, 0);
-              int enQty = qtyValidation("Enter Quantity: ");
-              double enPrice = priceValidation("Enter Price: ");
-              
-              AbstractItems newAbstractItems = addAbstractItem(itemCat, enID, enName, enQty, enPrice);
-              inventory.addItem(newAbstractItems, enID);
-            }
-            break;
-          }
-          
-          
+    while(inventory.isCatExists(itemCat)){
+      System.out.println(itemCat + " Category is found!");
+      System.out.println("\nPlease enter necessary information about the item:");
+      System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
+      if(itemCat.equalsIgnoreCase("clothing")){
+        //check if ID exist before continuing
+        String cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
+        String cName = stringEmptyChecker("Enter Name: ", null, 0);
+        int cQty = qtyValidation("Enter Quantity: ");
+        double cPrice = priceValidation("Enter Price: ");
+        
+        //AbstractItems newAbstractItems = addAbstractItem(itemCat, cID, cName, cQty, cPrice);
+        inventory.addItem(new Clothing(cID, cName, cQty, cPrice), cID);
+      }else if(itemCat.equalsIgnoreCase("electronics")){
+        //check if ID exist before continuing
+        String elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
+        String elName = stringEmptyChecker("Enter Name: ", null, 0);
+        int elQty = qtyValidation("Enter Quantity: ");
+        double elPrice = priceValidation("Enter Price: ");
+        
+        //AbstractItems newAbstractItems = addAbstractItem(itemCat, elID, elName, elQty, elPrice);
+        inventory.addItem(new Electronics(elID, elName, elQty, elPrice), elID);
+      }else if(itemCat.equalsIgnoreCase("entertainment")){
+        //check if ID exist before continuing
+        String enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
+        String enName = stringEmptyChecker("Enter Name: ", null, 0);
+        int enQty = qtyValidation("Enter Quantity: ");
+        double enPrice = priceValidation("Enter Price: ");
+        
+        //AbstractItems newAbstractItems = addAbstractItem(itemCat, enID, enName, enQty, enPrice);
+        inventory.addItem(new Entertainment(enID, enName, enQty, enPrice), enID);
+      }
+      break;
+    }     
   }
 
-  public static AbstractItems addAbstractItem(String cat, String id, String name, int qty, double price){
-    if(cat.equalsIgnoreCase("Clothing")){
-      return new Clothing(id, name, qty, price);
-    }else if(cat.equalsIgnoreCase("Electronics")){
-      return new Electronics(id, name, qty, price);
-    }else{
-      return new Entertainment(id, name, qty, price);
-    }
-  }
   public static void main(String[] args){
     System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
 
