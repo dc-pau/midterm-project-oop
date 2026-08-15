@@ -219,6 +219,38 @@ public class InventoryManagementSystem{
     return qty;
   }
 
+  public static double priceValidation(String prompt){
+    boolean isValidPrice = false;
+    double price = 0;
+
+    while(!isValidPrice){
+      System.out.print(prompt);
+      String priceStr = input.nextLine();
+
+      if(priceStr.length() > 1 && !(Character.isLetterOrDigit(priceStr.charAt(0)))){
+        System.out.println("Invalid input. Number cannot start with a symbol or space.");
+        continue;
+      }
+
+      if (priceStr.length() > 1 && priceStr.charAt(0) == '0') {
+        System.out.println("Invalid input. Number cannot start with 0.");
+        continue;
+      }
+
+      try{
+        price = Integer.parseInt(priceStr);
+
+        if(price >= 1){
+          isValidPrice = true;
+        }else{
+          System.out.println("Invalid input. Please enter a number greater than 0.");
+        }
+      }catch(NumberFormatException e){
+        System.out.println("Invalid input. You must enter an integer number.");
+      }
+    }
+    return price;
+  }
   public static void addItemMain(Inventory inventory){
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
           System.out.println("                                            ADD ITEM");
