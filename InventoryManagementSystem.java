@@ -257,14 +257,35 @@ public class InventoryManagementSystem{
           while(inventory.isCatExists(itemCat)){
             System.out.println(itemCat + " Category is found!");
             System.out.println("\nPlease enter necessary information about the item:");
-            System.out.println("NOTE: For ID format: First letter of the Category (C/E) + three 0's and one unique number. (Ex. C0001)");
-            String clothingID = stringEmptyChecker("\nEnter Item ID: ", "^C000\\d$", 1);
-            String clothingName = stringEmptyChecker("Enter Name: ", null, 0);
-            int clothingQty = qtyValidation("Enter Quantity: ");
-            double clothingPrice = priceValidation("Enter Price: ");
-            
-            AbstractItems newAbstractItems = addAbstractItem(itemCat, clothingID, clothingName, clothingQty, clothingPrice);
-            inventory.addItem(newAbstractItems, clothingID);
+            System.out.println("NOTE: For ID format: First Two letter of the Category (C/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
+            if(itemCat.equalsIgnoreCase("clothing")){
+              //check if ID exist before continuing
+              String cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
+              String cName = stringEmptyChecker("Enter Name: ", null, 0);
+              int cQty = qtyValidation("Enter Quantity: ");
+              double cPrice = priceValidation("Enter Price: ");
+              
+              AbstractItems newAbstractItems = addAbstractItem(itemCat, cID, cName, cQty, cPrice);
+              inventory.addItem(newAbstractItems, cID);
+            }else if(itemCat.equalsIgnoreCase("electronic")){
+              //check if ID exist before continuing
+              String elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
+              String elName = stringEmptyChecker("Enter Name: ", null, 0);
+              int elQty = qtyValidation("Enter Quantity: ");
+              double elPrice = priceValidation("Enter Price: ");
+              
+              AbstractItems newAbstractItems = addAbstractItem(itemCat, elID, elName, elQty, elPrice);
+              inventory.addItem(newAbstractItems, elID);
+            }else{
+              //check if ID exist before continuing
+              String enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
+              String enName = stringEmptyChecker("Enter Name: ", null, 0);
+              int enQty = qtyValidation("Enter Quantity: ");
+              double enPrice = priceValidation("Enter Price: ");
+              
+              AbstractItems newAbstractItems = addAbstractItem(itemCat, enID, enName, enQty, enPrice);
+              inventory.addItem(newAbstractItems, enID);
+            }
             break;
           }
           
