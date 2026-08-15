@@ -250,6 +250,50 @@ public class InventoryManagementSystem{
     }
     return price;
   }
+
+  public static char yesOrNoValidation(String prompt){
+        boolean isValidChar = false;
+        char ans = ' ';
+
+        while(!isValidChar){
+          System.out.print(prompt);
+          String txt = input.nextLine();
+
+          if(txt.isEmpty()){
+            System.out.println("Invalid input. You cannot leave this empty.");
+            continue;
+          }
+
+          if(txt.length() > 1){
+            System.out.println("Invalid input. Enter y or n only.");
+            continue;
+          }
+
+          char char1 = Character.toLowerCase(txt.charAt(0));
+
+          if(!((char1 == 'y') || (char1 == 'n'))){
+          System.out.println("Invalid input. Enter y or n only.");
+          continue;
+          }else{
+            ans = char1;
+            isValidChar = true;
+          }
+          
+        }
+        return ans;
+    }
+
+  public static void displayCurrentItem(String cat, String id, String name, int qty, double price){
+    System.out.println("\n       - - - - - - - - - - - - - - - - - - - - - - - -");
+    System.out.println("                        ITEM SUMMARY");
+    System.out.println("\n\t\t|Item Category:      " + cat); 
+    System.out.println("\t\t|Item ID:            " + id); 
+    System.out.println("\t\t|Name:               " + name); 
+    System.out.println("\t\t|Item Quantity:      " + qty); 
+    System.out.printf("\t\t|Item Price:         %,.2f%n", price); 
+    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - -");
+  }
+
   public static void addItemMain(Inventory inventory){
     System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
     System.out.println("                                            ADD ITEM");
@@ -265,49 +309,17 @@ public class InventoryManagementSystem{
     String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
 
     while(inventory.isCatExists(itemCat)){
+
       System.out.println(itemCat + " Category is found!");
       System.out.println("\nPlease enter necessary information about the item:");
       System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
 
       if(itemCat.equalsIgnoreCase("clothing")){
-        //check if ID exist before continuing
-        String cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
-        while(idExistsMain(inventory, cID)){
-          System.out.println("ID already exists. Please input another ID.");
-          cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
-        }
-        String cName = stringEmptyChecker("Enter Name: ", null, 0);
-        int cQty = qtyValidation("Enter Quantity: ");
-        double cPrice = priceValidation("Enter Price: ");
-        
-        //AbstractItems newAbstractItems = addAbstractItem(itemCat, cID, cName, cQty, cPrice);
-        inventory.addItem(new Clothing(cID, cName, cQty, cPrice), cID);
+        addItems(inventory, itemCat, "^CL000\\d$");
       }else if(itemCat.equalsIgnoreCase("electronics")){
-        //check if ID exist before continuing
-        String elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
-        while(idExistsMain(inventory, elID)){
-          System.out.println("ID already exists. Please input another ID.");
-          elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
-        }
-        String elName = stringEmptyChecker("Enter Name: ", null, 0);
-        int elQty = qtyValidation("Enter Quantity: ");
-        double elPrice = priceValidation("Enter Price: ");
-        
-        //AbstractItems newAbstractItems = addAbstractItem(itemCat, elID, elName, elQty, elPrice);
-        inventory.addItem(new Electronics(elID, elName, elQty, elPrice), elID);
+        addItems(inventory, itemCat, "^EL000\\d$");
       }else if(itemCat.equalsIgnoreCase("entertainment")){
-        //check if ID exist before continuing
-        String enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
-        while(idExistsMain(inventory, enID)){
-          System.out.println("ID already exists. Please input another ID.");
-          enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
-        }
-        String enName = stringEmptyChecker("Enter Name: ", null, 0);
-        int enQty = qtyValidation("Enter Quantity: ");
-        double enPrice = priceValidation("Enter Price: ");
-        
-        //AbstractItems newAbstractItems = addAbstractItem(itemCat, enID, enName, enQty, enPrice);
-        inventory.addItem(new Entertainment(enID, enName, enQty, enPrice), enID);
+        addItems(inventory, itemCat, "^EN000\\d$");
       }
       break;
     }     
@@ -315,6 +327,66 @@ public class InventoryManagementSystem{
 
   public static boolean idExistsMain(Inventory inventory, String id){
     return inventory.idExists(id);
+  }
+
+  public static void addItems(Inventory inventory, String cat, String regex){
+    String ID = " ";
+    String name = " ";
+    int qty = 0;
+    double price = 0;
+    
+    boolean isCorrect = false;
+    while(!isCorrect){
+      //check if ID exist before continuing
+      ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
+      while(idExistsMain(inventory, ID)){
+        System.out.println("ID already exists. Please input another ID.");
+        ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
+      }
+      name = stringEmptyChecker("Enter Name: ", null, 0);
+      qty = qtyValidation("Enter Quantity: ");
+      price = priceValidation("Enter Price: ");
+
+      displayCurrentItem(cat, ID, name, qty, price);
+
+      char yOrN = yesOrNoValidation("Are you sure that the information you entered is correct? (y/n): ");
+
+      if (yOrN == 'y') {
+        isCorrect = true;
+      }
+    }
+    
+    if(cat.equalsIgnoreCase("clothing")){
+      inventory.addItem(new Clothing(ID, name, qty, price), ID);
+    }else if(cat.equalsIgnoreCase("electronics")){
+      inventory.addItem(new Electronics(ID, name, qty, price), ID);
+    }else if(cat.equalsIgnoreCase("entertainment")){
+      inventory.addItem(new Entertainment(ID, name, qty, price), ID);
+    }
+  }
+
+  public static void updateItemMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                           UPDATE ITEM");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    while(idExistsMain(inventory, ID)){
+      System.out.println("ID found!");
+
+      //display info table (to be accomplished) from abstractItems
+
+      System.out.println("\n                                    CHOOSE WHAT TO UPDATE");
+      System.out.println("                                - - - - - - - - - - - - - - - -");
+      System.out.println("""
+
+                                [a] Quantity                         [b] Price                   [c] Both Quantity and Price
+                    """);
+      System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+    }
+
+    System.out.println("ID does exists. Please input another ID.");
+      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
   }
 
   public static void main(String[] args){
@@ -346,9 +418,7 @@ public class InventoryManagementSystem{
           addItemMain(inventory);
           break;
         case 2: //update item
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                           UPDATE ITEM");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          updateItemMain(inventory);
           break;
         case 3: //remove item
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
