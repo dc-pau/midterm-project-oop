@@ -140,6 +140,14 @@ class Inventory{
       return null;
     }
 
+    public AbstractItems removeItemByID(String id){
+      AbstractItems item = getItemByID(id);
+      if(item != null){
+        items.remove(item);
+      }
+      return item;
+    }
+
     public boolean isEmpty(){
       return items.isEmpty();
     }
@@ -469,8 +477,43 @@ public class InventoryManagementSystem{
     }
   }
 
-  public static void updateItem(Inventory inventory){
+  public static void removeItemMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                           REMOVE ITEM");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
 
+    String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    while(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    }
+
+    AbstractItems item = inventory.getItemByID(ID);
+
+    System.out.println("ID found!");
+    displayCurrentItem(item.getCategory(), item.getId(), item.getName(), item.getQty(), item.getPrice());
+
+    boolean isRemoved = false;
+    while(!isRemoved){
+      char rmv = charValidation("Are you sure you want to remove this item? (y/n): ", 'y', 'n');
+      if (rmv == 'y') {
+        isRemoved = true;
+      }else{
+        break;
+      }
+    }
+
+    if(isRemoved){
+      inventory.removeItemByID(ID);
+      System.out.println("Item " + item.getName() + " has been removed from the inventory'");
+    }else{
+      System.out.println("Item is not removed.");
+    }
   }
 
   public static void main(String[] args){
@@ -505,9 +548,7 @@ public class InventoryManagementSystem{
           updateItemMain(inventory);
           break;
         case 3: //remove item
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                           REMOVE ITEM");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          removeItemMain(inventory);
           break;
         case 4: //display items by category
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
