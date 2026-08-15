@@ -107,8 +107,49 @@ class Inventory{
 
 public class InventoryManagementSystem{
   public static Scanner input = new Scanner(System.in);
-  public static String idValidation(String prompt){
+  public static String stringEmptyChecker(String prompt, String regex, int type){
+    boolean hasInput = false;
+    String str = " ";
 
+    while(!hasInput){
+      System.out.print(prompt);
+      str = input.nextLine().trim().replaceAll("\\s+", " ");
+
+      if(str.isEmpty()){
+        System.out.println("You cannot leave this field empty.");
+        hasInput = false;
+      }else{
+        hasInput = true;
+      }
+    }
+
+    while(hasInput){
+      //type: 1 --> id and 0 --> name
+      if(type == 1){
+        str = idValidation(prompt, regex);
+      }else{
+        break;
+      }
+    }
+    return str;
+  }
+  public static String idValidation(String prompt, String regex){
+
+    boolean isValidId = false;
+    String id = " ";
+    
+    while(!isValidId){
+      System.out.print(prompt);
+      id = input.nextLine().trim().replaceAll("\\s+", " ");
+
+      if(!id.equalsIgnoreCase(regex)){
+        System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
+        isValidId = false;
+      }else{
+        isValidId = true;
+      }
+    }
+    return id;
   }
   public static void addItemMain(Inventory inventory){
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
@@ -128,8 +169,8 @@ public class InventoryManagementSystem{
           while(inventory.isCatExists(itemCat)){
             System.out.println(itemCat + " Category is found!");
             System.out.println("Please enter necessary information about the item:");
-            String clothingID = idValidation("Enter Item ID: ", "^C000//d{1}&");
-            String clothingName = nameValidation("Enter Name: ");
+            String clothingID = stringEmptyChecker("Enter Item ID: ", "^C000//d{1}&", 1);
+            String clothingName = stringEmptyChecker("Enter Name: ", null, 0);
             int clothingQty = qtyValidation("Enter Quantity: ");
             double clothingPrice = priceValidation("Enter price: ");
             
