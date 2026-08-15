@@ -82,19 +82,28 @@ class Inventory{
 
   public static final String[] itemCategories = {"Clothing", "Electronics", "Entertainment"};
 
+  //check if category exists
   public boolean isCatExists(String itemCat){
     for(String item : itemCategories){
       if(item.equalsIgnoreCase(itemCat)){
         return true;
       }
     }
+    System.out.printf("\nCategory %s does not exist!", itemCat);
     return false;
   }
 
-  public void addItem(String id, String name, int qty, double price){
-    
+  //add items
+  public void addItem(AbstractItems item, String id){
+    //checks for duplicates using item id
+    for(AbstractItems itemHolder : items){
+      if(itemHolder.getId().equalsIgnoreCase(id)){
+        System.out.printf("Item with %s id already exists. Please input another item.\n", id);
+      }
+    }
+    items.add(item);
+    }
   }
-}
 
 public class InventoryManagementSystem{
   public static Scanner input = new Scanner(System.in);
@@ -102,7 +111,7 @@ public class InventoryManagementSystem{
 
   }
   public static void addItemMain(Inventory inventory){
-    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
           System.out.println("                                            ADD ITEM");
           System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
           
@@ -116,16 +125,29 @@ public class InventoryManagementSystem{
           System.out.print("Enter Item Category: ");
           String itemCat = input.nextLine();
 
-          if(inventory.isCatExists(itemCat)){
-            String clothingID = idValidation("Enter User ID: ");
-            String clothingName = nameValidation("Enter User Name: ");
+          while(inventory.isCatExists(itemCat)){
+            System.out.println(itemCat + " Category is found!");
+            System.out.println("Please enter necessary information about the item:");
+            String clothingID = idValidation("Enter Item ID: ", "^C000//d{1}&");
+            String clothingName = nameValidation("Enter Name: ");
             int clothingQty = qtyValidation("Enter Quantity: ");
             double clothingPrice = priceValidation("Enter price: ");
             
-            inventory.addItem(clothingID, clothingName, clothingQty, clothingPrice);
-          }else{
-            System.out.println("Invalid Item Category.");
+            AbstractItems newAbstractItems = addAbstractItem(itemCat, clothingID, clothingName, clothingQty, clothingPrice);
+            inventory.addItem(newAbstractItems, clothingID);
           }
+          
+          
+  }
+
+  public static AbstractItems addAbstractItem(String cat, String id, String name, int qty, double price){
+    if(cat.equalsIgnoreCase("Clothing")){
+      return new Clothing(id, name, qty, price);
+    }else if(cat.equalsIgnoreCase("Electronics")){
+      return new Electronics(id, name, qty, price);
+    }else{
+      return new Entertainment(id, name, qty, price);
+    }
   }
   public static void main(String[] args){
     System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
