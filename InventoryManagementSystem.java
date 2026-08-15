@@ -280,7 +280,7 @@ public class InventoryManagementSystem{
     return price;
   }
 
-  public static char yesOrNoValidation(String prompt){
+  public static char charValidation(String prompt, char option1, char option2){
         boolean isValidChar = false;
         char ans = ' ';
 
@@ -300,8 +300,8 @@ public class InventoryManagementSystem{
 
           char char1 = Character.toLowerCase(txt.charAt(0));
 
-          if(!((char1 == 'y') || (char1 == 'n'))){
-          System.out.println("Invalid input. Enter y or n only.");
+          if(!((char1 == option1) || (char1 == option1))){
+          System.out.println("Invalid input. Enter " + option1 + " or " + option2 + " only.");
           continue;
           }else{
             ans = char1;
@@ -312,48 +312,15 @@ public class InventoryManagementSystem{
         return ans;
     }
 
-     public static char charChecker(String prompt, char option1, char option2, char option3){
-    char option = ' ';
-
-    boolean isValid = false;
-
-    while(!isValid){
-      System.out.print(prompt);
-      String txt = input.nextLine();
-
-      if(txt.isEmpty()){
-        System.out.println("Invalid input. You cannot leave this empty.");
-        continue;
-      }
-
-      if(txt.length() > 1){
-        System.out.println("Invalid input. Enter " + option1 + ", " + option2 + " or " + option3 + " only.");
-        continue;
-      }
-
-      char char1 = Character.toLowerCase(txt.charAt(0));
-
-      if(!((char1 == option1) || (char1 == option2) || (char1 == option3))){
-      System.out.println("Invalid input. Enter " + option1 + ", " + option2 + " or " + option3 + " only.");
-      continue;
-      }else{
-        option = char1;
-        isValid = true;
-      }
-      
-    }
-    return option;
-  }
-
   public static void displayCurrentItem(String cat, String id, String name, int qty, double price){
-    System.out.println("\n       - - - - - - - - - - - - - - - - - - - - - - - -");
-    System.out.println("                        ITEM SUMMARY");
-    System.out.println("\n\t\t|Item Category:      " + cat); 
-    System.out.println("\t\t|Item ID:            " + id); 
-    System.out.println("\t\t|Name:               " + name); 
-    System.out.println("\t\t|Item Quantity:      " + qty); 
-    System.out.printf("\t\t|Item Price:         %,.2f%n", price); 
-    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - -");
+    System.out.println("\n                        - - - - - - - - - - - - - - - - - - - - - - - -");
+    System.out.println("                                         ITEM SUMMARY");
+    System.out.println("\n\t\t\t\t|Item Category:      " + cat); 
+    System.out.println("\t\t\t\t|Item ID:            " + id); 
+    System.out.println("\t\t\t\t|Name:               " + name); 
+    System.out.println("\t\t\t\t|Item Quantity:      " + qty); 
+    System.out.printf("\t\t\t\t|Item Price:         %,.2f%n", price); 
+    System.out.println("                        - - - - - - - - - - - - - - - - - - - - - - - -");
   }
 
   public static void addItemMain(Inventory inventory){
@@ -411,7 +378,7 @@ public class InventoryManagementSystem{
 
       displayCurrentItem(cat, ID, name, qty, price);
 
-      char yOrN = yesOrNoValidation("Are you sure that the information you entered is correct? (y/n): ");
+      char yOrN = charValidation("Are you sure that the information you entered is correct? (y/n): ", 'y', 'n');
 
       if (yOrN == 'y') {
         isCorrect = true;
@@ -457,20 +424,47 @@ public class InventoryManagementSystem{
                   """);
     System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
 
-    char upd = charChecker("Enter chosen information to update: ", 'a', 'b', 'c');
+    char upd = charValidation("Enter chosen information to update: ", 'a', 'b');
 
     switch(upd){
       case 'a'://qty
-        int oldQty = item.getQty();
-        int newQty = qtyValidation("Enter New Quantity: ");
+
+        boolean toUpdateQty = false;
+        int oldQty = 0;
+        int newQty = 0;
+        while(!toUpdateQty){
+          oldQty = item.getQty();
+          newQty = qtyValidation("\nEnter New Quantity: ");
+
+          char yOrN = charValidation("Are you sure you would like to update the item quantity? (y/n): ", 'y', 'n');
+
+          if (yOrN == 'y') {
+            toUpdateQty = true;
+          }
+        }
+
         item.setQty(newQty);
-        System.out.printf("Quantity of Item %s is updated from %d to %d.\n", item.getCategory(), oldQty, newQty);
+        System.out.printf("Quantity of Item %s is updated from %d to %d.\n", item.getName(), oldQty, newQty);
+
         break;
       case 'b'://price
-        double oldPrice = item.getPrice();
-        double newPrice = priceValidation("Enter New Price: ");
+        boolean toUpdatePrice = false;
+        double oldPrice = 0;
+        double newPrice = 0;
+        while(!toUpdatePrice){
+          oldPrice = item.getPrice();
+          newPrice = priceValidation("\nEnter New Price: ");
+
+          char yOrN = charValidation("Are you sure you would like to update the item price? (y/n): ", 'y', 'n');
+
+          if (yOrN == 'y') {
+            toUpdatePrice = true;
+          }
+        }
+        
         item.setPrice(newPrice);
-        System.out.printf("Price of Item %s is updated from %,.2f to %,.2f.\n", item.getCategory(), oldPrice, newPrice);
+        System.out.printf("Price of Item %s is updated from %,.2f to %,.2f.\n", item.getName(), oldPrice, newPrice);
+
         break;
     }
   }
