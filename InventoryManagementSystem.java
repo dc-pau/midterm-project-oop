@@ -101,6 +101,7 @@ class Inventory{
         System.out.printf("Item with %s id already exists. Please input another item.\n", id);
       }
     }
+    System.out.println("Item added successfully!");
     items.add(item);
     }
   }
@@ -156,33 +157,21 @@ public class InventoryManagementSystem{
       }
     }
 
-    while(hasInput){
-      //type: 1 --> id and 0 --> name
-      if(type == 1){
-        str = idValidation(prompt, regex);
-      }else{
-        break;
-      }
+    if(type == 1){
+      str = idValidation(prompt, str, regex);
     }
+
     return str;
   }
 
-  public static String idValidation(String prompt, String regex){
-
-    boolean isValidId = false;
-    String id = " ";
-    
-    while(!isValidId){
-      System.out.print(prompt);
-      id = input.nextLine().trim().replaceAll("\\s+", " ");
-
-      if(!id.equalsIgnoreCase(regex)){
-        System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
-        isValidId = false;
-      }else{
-        isValidId = true;
-      }
+  public static String idValidation(String prompt, String id, String regex){
+    if(!id.matches(regex)){
+      System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
+      id = stringEmptyChecker(prompt, regex, 1);
+    }else{
+      return id;
     }
+
     return id;
   }
 
@@ -260,22 +249,23 @@ public class InventoryManagementSystem{
           System.out.println("                                - - - - - - - - - - - - - - - -");
           System.out.println("""
 
-                               [a] Clothing                     [b] Electronics               [c] Entertainment
+                                   Clothing                         Electronics                   Entertainment
                         """);
           System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
-          System.out.print("Enter Item Category: ");
-          String itemCat = input.nextLine();
+          String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
 
           while(inventory.isCatExists(itemCat)){
             System.out.println(itemCat + " Category is found!");
-            System.out.println("Please enter necessary information about the item:");
-            String clothingID = stringEmptyChecker("Enter Item ID: ", "^C000//d{1}&", 1);
+            System.out.println("\nPlease enter necessary information about the item:");
+            System.out.println("NOTE: For ID format: First letter of the Category (C/E) + three 0's and one unique number. (Ex. C0001)");
+            String clothingID = stringEmptyChecker("\nEnter Item ID: ", "^C000\\d$", 1);
             String clothingName = stringEmptyChecker("Enter Name: ", null, 0);
             int clothingQty = qtyValidation("Enter Quantity: ");
-            double clothingPrice = priceValidation("Enter price: ");
+            double clothingPrice = priceValidation("Enter Price: ");
             
             AbstractItems newAbstractItems = addAbstractItem(itemCat, clothingID, clothingName, clothingQty, clothingPrice);
             inventory.addItem(newAbstractItems, clothingID);
+            break;
           }
           
           
