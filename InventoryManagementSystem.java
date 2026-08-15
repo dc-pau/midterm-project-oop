@@ -151,6 +151,37 @@ public class InventoryManagementSystem{
     }
     return id;
   }
+  public static int menuChecker(String prompt){
+    boolean isValidMenu = false;
+    int menu = 0;
+
+    while(!isValidMenu){
+      System.out.print(prompt);
+      String number = input.nextLine();
+
+      if(number.length() > 1 && !(Character.isLetterOrDigit(number.charAt(0)))){
+        System.out.println("Invalid input. Number cannot start with a symbol or space.");
+        continue;
+      }
+
+      if(number.length() > 1 && number.charAt(0) == '0'){
+        System.out.println("Invalid input. Number cannot start with 0.");
+        continue;
+      }
+
+      try{
+        menu = Integer.parseInt(number);
+
+        if(menu >= 1 && menu <= 9){
+          isValidMenu = true;
+        }else{
+          System.out.println("Invalid input. Please enter a number between 1 to 9.");
+        }
+      }catch(NumberFormatException e){
+        System.out.println("Invalid input. You must enter an integer number.");
+      }
+    }
+  }
   public static void addItemMain(Inventory inventory){
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
           System.out.println("                                            ADD ITEM");
@@ -212,8 +243,7 @@ public class InventoryManagementSystem{
                         """);
       System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 
-      System.out.print("Enter Menu Choice: ");
-      int menu = input.nextInt();
+      int menu = menuChecker("Enter Menu Choice: ");
 
       switch(menu){
         case 1: //add item
