@@ -104,6 +104,16 @@ class Inventory{
     System.out.println("Item added successfully!");
     items.add(item);
     }
+
+    //check if id already exists
+    public boolean idExists(String id){
+      for(AbstractItems item : items){
+        if(item.getId().equalsIgnoreCase(id)){
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
 public class InventoryManagementSystem{
@@ -258,9 +268,14 @@ public class InventoryManagementSystem{
       System.out.println(itemCat + " Category is found!");
       System.out.println("\nPlease enter necessary information about the item:");
       System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
+
       if(itemCat.equalsIgnoreCase("clothing")){
         //check if ID exist before continuing
         String cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
+        while(idExistsMain(inventory, cID)){
+          System.out.println("ID already exists. Please input another ID.");
+          cID = stringEmptyChecker("\nEnter Item ID: ", "^CL000\\d$", 1);
+        }
         String cName = stringEmptyChecker("Enter Name: ", null, 0);
         int cQty = qtyValidation("Enter Quantity: ");
         double cPrice = priceValidation("Enter Price: ");
@@ -270,6 +285,10 @@ public class InventoryManagementSystem{
       }else if(itemCat.equalsIgnoreCase("electronics")){
         //check if ID exist before continuing
         String elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
+        while(idExistsMain(inventory, elID)){
+          System.out.println("ID already exists. Please input another ID.");
+          elID = stringEmptyChecker("\nEnter Item ID: ", "^EL000\\d$", 1);
+        }
         String elName = stringEmptyChecker("Enter Name: ", null, 0);
         int elQty = qtyValidation("Enter Quantity: ");
         double elPrice = priceValidation("Enter Price: ");
@@ -279,6 +298,10 @@ public class InventoryManagementSystem{
       }else if(itemCat.equalsIgnoreCase("entertainment")){
         //check if ID exist before continuing
         String enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
+        while(idExistsMain(inventory, enID)){
+          System.out.println("ID already exists. Please input another ID.");
+          enID = stringEmptyChecker("\nEnter Item ID: ", "^EN000\\d$", 1);
+        }
         String enName = stringEmptyChecker("Enter Name: ", null, 0);
         int enQty = qtyValidation("Enter Quantity: ");
         double enPrice = priceValidation("Enter Price: ");
@@ -288,6 +311,10 @@ public class InventoryManagementSystem{
       }
       break;
     }     
+  }
+
+  public static boolean idExistsMain(Inventory inventory, String id){
+    return inventory.idExists(id);
   }
 
   public static void main(String[] args){
