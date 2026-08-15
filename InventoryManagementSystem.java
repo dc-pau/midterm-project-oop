@@ -107,50 +107,6 @@ class Inventory{
 
 public class InventoryManagementSystem{
   public static Scanner input = new Scanner(System.in);
-  public static String stringEmptyChecker(String prompt, String regex, int type){
-    boolean hasInput = false;
-    String str = " ";
-
-    while(!hasInput){
-      System.out.print(prompt);
-      str = input.nextLine().trim().replaceAll("\\s+", " ");
-
-      if(str.isEmpty()){
-        System.out.println("You cannot leave this field empty.");
-        hasInput = false;
-      }else{
-        hasInput = true;
-      }
-    }
-
-    while(hasInput){
-      //type: 1 --> id and 0 --> name
-      if(type == 1){
-        str = idValidation(prompt, regex);
-      }else{
-        break;
-      }
-    }
-    return str;
-  }
-  public static String idValidation(String prompt, String regex){
-
-    boolean isValidId = false;
-    String id = " ";
-    
-    while(!isValidId){
-      System.out.print(prompt);
-      id = input.nextLine().trim().replaceAll("\\s+", " ");
-
-      if(!id.equalsIgnoreCase(regex)){
-        System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
-        isValidId = false;
-      }else{
-        isValidId = true;
-      }
-    }
-    return id;
-  }
   public static int menuChecker(String prompt){
     boolean isValidMenu = false;
     int menu = 0;
@@ -181,7 +137,88 @@ public class InventoryManagementSystem{
         System.out.println("Invalid input. You must enter an integer number.");
       }
     }
+    return menu;
   }
+
+  public static String stringEmptyChecker(String prompt, String regex, int type){
+    boolean hasInput = false;
+    String str = " ";
+
+    while(!hasInput){
+      System.out.print(prompt);
+      str = input.nextLine().trim().replaceAll("\\s+", " ");
+
+      if(str.isEmpty()){
+        System.out.println("You cannot leave this field empty.");
+        hasInput = false;
+      }else{
+        hasInput = true;
+      }
+    }
+
+    while(hasInput){
+      //type: 1 --> id and 0 --> name
+      if(type == 1){
+        str = idValidation(prompt, regex);
+      }else{
+        break;
+      }
+    }
+    return str;
+  }
+
+  public static String idValidation(String prompt, String regex){
+
+    boolean isValidId = false;
+    String id = " ";
+    
+    while(!isValidId){
+      System.out.print(prompt);
+      id = input.nextLine().trim().replaceAll("\\s+", " ");
+
+      if(!id.equalsIgnoreCase(regex)){
+        System.out.println("Invalid id format. Please use this format instead: First letter of the Category + three 0's and one unique number. (Ex. C0001)");
+        isValidId = false;
+      }else{
+        isValidId = true;
+      }
+    }
+    return id;
+  }
+
+  public static int qtyValidation(String prompt){
+    boolean isValidQty = false;
+    int qty = 0;
+
+    while(!isValidQty){
+      System.out.print(prompt);
+      String qtyStr = input.nextLine();
+
+      if(qtyStr.length() > 1 && !(Character.isLetterOrDigit(qtyStr.charAt(0)))){
+        System.out.println("Invalid input. Number cannot start with a symbol or space.");
+        continue;
+      }
+
+      if (qtyStr.length() > 1 && qtyStr.charAt(0) == '0') {
+        System.out.println("Invalid input. Number cannot start with 0.");
+        continue;
+      }
+
+      try{
+        qty = Integer.parseInt(qtyStr);
+
+        if(qty >= 1){
+          isValidQty = true;
+        }else{
+          System.out.println("Invalid input. Please enter a number greater than 0.");
+        }
+      }catch(NumberFormatException e){
+        System.out.println("Invalid input. You must enter an integer number.");
+      }
+    }
+    return qty;
+  }
+
   public static void addItemMain(Inventory inventory){
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
           System.out.println("                                            ADD ITEM");
