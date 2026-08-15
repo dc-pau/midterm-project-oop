@@ -148,8 +148,33 @@ class Inventory{
       return item;
     }
 
+    public ArrayList<AbstractItems> getItemsByCat(String cat){
+      ArrayList<AbstractItems> absItem = new ArrayList<>();
+      for(AbstractItems item : items){
+        if(item.getCategory().equalsIgnoreCase(cat)){
+          absItem.add(item);
+        }
+      }
+      return absItem;
+    }
+
     public boolean isEmpty(){
       return items.isEmpty();
+    }
+
+    public void displayAll(Inventory inventory){
+      if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
+    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
+
+    for(AbstractItems item : items){
+      String priceStr = String.format("%,.2f", item.getPrice());
+      System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+    }
     }
   }
 
@@ -516,6 +541,38 @@ public class InventoryManagementSystem{
     }
   }
 
+  public static void displayByCatMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                     DISPLAY ITEMS BY CATEGORY");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
+    String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
+
+    if(inventory.isCatExists(itemCat)){
+      System.out.printf("%-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price");
+      System.out.printf("%-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------");
+
+      ArrayList <AbstractItems> display = inventory.getItemsByCat(itemCat);
+      for(AbstractItems item : display){
+        String priceStr = String.format("%,.2f", item.getPrice());
+        System.out.printf("%-25s %-25s %-25d %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr);
+      }
+    }
+  }
+
+  public static void displayAllItemsMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                         DISPLAY ALL ITEMS");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    inventory.displayAll(inventory);
+  }
+
   public static void main(String[] args){
     System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
 
@@ -551,14 +608,10 @@ public class InventoryManagementSystem{
           removeItemMain(inventory);
           break;
         case 4: //display items by category
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                     DISPLAY ITEMS BY CATEGORY");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          displayByCatMain(inventory);
           break;
         case 5: //display all items
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                         DISPLAY ALL ITEMS");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          displayAllItemsMain(inventory);
           break;
         case 6: //search item
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
