@@ -41,6 +41,8 @@ abstract class AbstractItems{
   public void setPrice(double price){
     this.price = price;
   }
+
+  public abstract String getCategory();
   
 }
 
@@ -51,6 +53,11 @@ class Clothing extends AbstractItems{
   public Clothing(String id, String name, int qty, double price){
     super(id, name, qty, price);
   }
+
+  @Override
+  public String getCategory(){
+    return "Clothing";
+  }
 }
 
 //electronics class
@@ -59,6 +66,11 @@ class Electronics extends AbstractItems{
   //constructor
   public Electronics(String id, String name, int qty, double price){
     super(id, name, qty, price);
+  }
+
+  @Override
+  public String getCategory(){
+    return "Electronics";
   }
 }
 
@@ -70,6 +82,10 @@ class Entertainment extends AbstractItems{
     super(id, name, qty, price);
   }
 
+  @Override
+  public String getCategory(){
+    return "Entertainment";
+  }
 }
 
 //inventory class
@@ -113,6 +129,19 @@ class Inventory{
         }
       }
       return false;
+    }
+
+    public AbstractItems getItemByID(String id){
+      for(AbstractItems item : items){
+        if(item.getId().equalsIgnoreCase(id)){
+          return item;
+        }
+      }
+      return null;
+    }
+
+    public boolean isEmpty(){
+      return items.isEmpty();
     }
   }
 
@@ -283,6 +312,39 @@ public class InventoryManagementSystem{
         return ans;
     }
 
+     public static char charChecker(String prompt, char option1, char option2, char option3){
+    char option = ' ';
+
+    boolean isValid = false;
+
+    while(!isValid){
+      System.out.print(prompt);
+      String txt = input.nextLine();
+
+      if(txt.isEmpty()){
+        System.out.println("Invalid input. You cannot leave this empty.");
+        continue;
+      }
+
+      if(txt.length() > 1){
+        System.out.println("Invalid input. Enter " + option1 + ", " + option2 + " or " + option3 + " only.");
+        continue;
+      }
+
+      char char1 = Character.toLowerCase(txt.charAt(0));
+
+      if(!((char1 == option1) || (char1 == option2) || (char1 == option3))){
+      System.out.println("Invalid input. Enter " + option1 + ", " + option2 + " or " + option3 + " only.");
+      continue;
+      }else{
+        option = char1;
+        isValid = true;
+      }
+      
+    }
+    return option;
+  }
+
   public static void displayCurrentItem(String cat, String id, String name, int qty, double price){
     System.out.println("\n       - - - - - - - - - - - - - - - - - - - - - - - -");
     System.out.println("                        ITEM SUMMARY");
@@ -370,23 +432,51 @@ public class InventoryManagementSystem{
     System.out.println("                                           UPDATE ITEM");
     System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
 
-    String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(idExistsMain(inventory, ID)){
-      System.out.println("ID found!");
-
-      //display info table (to be accomplished) from abstractItems
-
-      System.out.println("\n                                    CHOOSE WHAT TO UPDATE");
-      System.out.println("                                - - - - - - - - - - - - - - - -");
-      System.out.println("""
-
-                                [a] Quantity                         [b] Price                   [c] Both Quantity and Price
-                    """);
-      System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
     }
 
-    System.out.println("ID does exists. Please input another ID.");
+    String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    while(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    }
+
+    AbstractItems item = inventory.getItemByID(ID);
+
+    System.out.println("ID found!");
+    displayCurrentItem(item.getCategory(), item.getId(), item.getName(), item.getQty(), item.getPrice());
+
+
+    System.out.println("\n                                    CHOOSE WHAT TO UPDATE");
+    System.out.println("                                - - - - - - - - - - - - - - - -");
+    System.out.println("""
+
+                                        [a] Quantity                         [b] Price               
+                  """);
+    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+
+    char upd = charChecker("Enter chosen information to update: ", 'a', 'b', 'c');
+
+    switch(upd){
+      case 'a'://qty
+        int oldQty = item.getQty();
+        int newQty = qtyValidation("Enter New Quantity: ");
+        item.setQty(newQty);
+        System.out.printf("Quantity of Item %s is updated from %d to %d.\n", item.getCategory(), oldQty, newQty);
+        break;
+      case 'b'://price
+        double oldPrice = item.getPrice();
+        double newPrice = priceValidation("Enter New Price: ");
+        item.setPrice(newPrice);
+        System.out.printf("Price of Item %s is updated from %,.2f to %,.2f.\n", item.getCategory(), oldPrice, newPrice);
+        break;
+    }
+  }
+
+  public static void updateItem(Inventory inventory){
+
   }
 
   public static void main(String[] args){
