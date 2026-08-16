@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 //abstract class
 abstract class AbstractItems{
@@ -156,6 +157,30 @@ class Inventory{
         }
       }
       return absItem;
+    }
+
+    public ArrayList<AbstractItems> getSortedItems(char sort, char order){
+      ArrayList<AbstractItems> sortItems = new ArrayList<>(items);
+
+      //set default -- and for initializing
+      Comparator<AbstractItems> comparator = Comparator.comparingInt(AbstractItems::getQty);
+
+      switch(sort){
+        case 'a': //sort by qty
+          comparator = Comparator.comparingInt(AbstractItems::getQty);
+          break;
+        case 'b': //sort by price
+          comparator = Comparator.comparingDouble(AbstractItems::getPrice);
+          break;
+      }
+
+      //sort by descending
+      if(order == 'b'){
+        comparator = comparator.reversed();
+      }
+
+      sortItems.sort(comparator);
+      return sortItems;
     }
 
     public boolean isEmpty(){
@@ -329,7 +354,7 @@ public class InventoryManagementSystem{
 
           char char1 = Character.toLowerCase(txt.charAt(0));
 
-          if(!((char1 == option1) || (char1 == option1))){
+          if(!((char1 == option1) || (char1 == option2))){
           System.out.println("Invalid input. Enter " + option1 + " or " + option2 + " only.");
           continue;
           }else{
@@ -597,6 +622,73 @@ public class InventoryManagementSystem{
     
   }
 
+  public static void sortItemsMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                           SORT ITEMS");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
+    System.out.println("\n                                          SORT BY");
+    System.out.println("                                - - - - - - - - - - - - - - - -");
+    System.out.println("""
+
+                                        [a] Quantity                         [b] Price               
+                  """);
+    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+
+    char sort = charValidation("Enter chosen information to sort: ", 'a', 'b');
+
+    switch(sort){
+      case 'a': //quantity
+        sortItems(inventory, sort);
+        break;
+      case 'b': //price
+        sortItems(inventory, sort);
+        break;
+    }
+  }
+
+  public static void sortItems(Inventory inventory, char sort){
+    System.out.println("\n                                       SORTING ORDER");
+    System.out.println("                                - - - - - - - - - - - - - - - -");
+    System.out.println("""
+
+                                        [a] Ascending                         [b] Descending               
+                  """);
+    System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
+    char order = charValidation("Enter chosen information to sort: ", 'a', 'b');
+
+    switch(order){
+      case 'a': //ascending
+        ArrayList<AbstractItems> sortedAsc = inventory.getSortedItems(sort, order);
+        displayArrayList(sortedAsc);
+        break;
+      case 'b': //descending
+        ArrayList<AbstractItems> sortedDesc = inventory.getSortedItems(sort, order);
+        displayArrayList(sortedDesc);
+        break;
+    }
+  }
+
+  public static void displayArrayList(ArrayList<AbstractItems> sorted){
+    if(sorted.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
+    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
+
+    for(AbstractItems item : sorted){
+      String priceStr = String.format("%,.2f", item.getPrice());
+      System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+    }
+  }
+
   public static void main(String[] args){
     System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
 
@@ -641,9 +733,7 @@ public class InventoryManagementSystem{
           searchItemMain(inventory);
           break;
         case 7: //sort items
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                           SORT ITEMS");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          sortItemsMain(inventory);
           break;
         case 8: //display low stock items
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
