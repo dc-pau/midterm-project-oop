@@ -110,6 +110,17 @@ class Inventory{
     return false;
   }
 
+  public ArrayList<AbstractItems> catItems(String itemCat){
+    ArrayList<AbstractItems> catItems = new ArrayList<>();
+
+    for(AbstractItems item : items){
+      if(item.getCategory().equalsIgnoreCase(itemCat)){
+        catItems.add(item);
+      }
+    }
+    return catItems;
+  }
+
   //add items
   public void addItem(AbstractItems item, String id){
     //checks for duplicates using item id
@@ -189,12 +200,12 @@ class Inventory{
 
     public void displayAll(Inventory inventory){
 
-      System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
-      System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
+      System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+      System.out.printf("%-20s %-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
 
       for(AbstractItems item : items){
         String priceStr = String.format("%,.2f", item.getPrice());
-        System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+        System.out.printf("%-20s %-20s %-20d %-20s %-20s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
       }
     }
 
@@ -405,14 +416,14 @@ public class InventoryManagementSystem{
 
       System.out.println(itemCat + " Category is found!");
       System.out.println("\nPlease enter necessary information about the item:");
-      System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
+      System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and three random numbers. (Ex. CL000111)");
 
       if(itemCat.equalsIgnoreCase("clothing")){
-        addItems(inventory, itemCat, "^CL000\\d$");
+        addItems(inventory, itemCat, "^CL000\\d{3}$");
       }else if(itemCat.equalsIgnoreCase("electronics")){
-        addItems(inventory, itemCat, "^EL000\\d$");
+        addItems(inventory, itemCat, "^EL000\\d{3}$");
       }else if(itemCat.equalsIgnoreCase("entertainment")){
-        addItems(inventory, itemCat, "^EN000\\d$");
+        addItems(inventory, itemCat, "^EN000\\d{3}$");
       }
       break;
     }     
@@ -584,15 +595,22 @@ public class InventoryManagementSystem{
 
     String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
 
-    if(inventory.isCatExists(itemCat)){
-      System.out.printf("%-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price");
-      System.out.printf("%-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------");
+    if(!inventory.isCatExists(itemCat)){
+      return;
+    }
+
+    if(!inventory.catItems(itemCat).isEmpty()){
+      System.out.printf("\n%-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price");
+      System.out.printf("%-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------");
 
       ArrayList <AbstractItems> display = inventory.getItemsByCat(itemCat);
       for(AbstractItems item : display){
         String priceStr = String.format("%,.2f", item.getPrice());
-        System.out.printf("%-25s %-25s %-25d %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr);
+        System.out.printf("%-20s %-20s %-20d %-20s%n", item.getId(), item.getName(), item.getQty(), priceStr);
       }
+    }else{
+      System.out.println("No items available.");
+      return;
     }
   }
 
@@ -690,12 +708,12 @@ public class InventoryManagementSystem{
       return;
     }
 
-    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
-    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
+    System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+    System.out.printf("%-20s %-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
 
     for(AbstractItems item : sorted){
       String priceStr = String.format("%,.2f", item.getPrice());
-      System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+      System.out.printf("%-20s %-20s %-20d %-20s %-20s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
     }
   }
 
@@ -762,5 +780,6 @@ public class InventoryManagementSystem{
           break;
       }
     }
+    System.out.println("Thank you for using Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
   }
 }
