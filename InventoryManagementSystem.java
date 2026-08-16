@@ -163,10 +163,6 @@ class Inventory{
     }
 
     public void displayAll(Inventory inventory){
-      if(inventory.isEmpty()){
-      System.out.println("No items available.");
-      return;
-    }
 
     System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
     System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
@@ -347,7 +343,7 @@ public class InventoryManagementSystem{
 
   public static void displayCurrentItem(String cat, String id, String name, int qty, double price){
     System.out.println("\n                        - - - - - - - - - - - - - - - - - - - - - - - -");
-    System.out.println("                                         ITEM SUMMARY");
+    System.out.println("                                         ITEM DETAILS");
     System.out.println("\n\t\t\t\t|Item Category:      " + cat); 
     System.out.println("\t\t\t\t|Item ID:            " + id); 
     System.out.println("\t\t\t\t|Name:               " + name); 
@@ -570,7 +566,35 @@ public class InventoryManagementSystem{
     System.out.println("                                         DISPLAY ALL ITEMS");
     System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
 
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
     inventory.displayAll(inventory);
+  }
+
+  public static void searchItemMain(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                          SEARCH ITEM");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    if(inventory.isEmpty()){
+      System.out.println("No items available.");
+      return;
+    }
+
+    String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    while(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
+    }
+
+    AbstractItems item = inventory.getItemByID(ID);
+
+    System.out.println("ID found!");
+    displayCurrentItem(item.getCategory(), item.getId(), item.getName(), item.getQty(), item.getPrice());
+    
   }
 
   public static void main(String[] args){
@@ -614,9 +638,7 @@ public class InventoryManagementSystem{
           displayAllItemsMain(inventory);
           break;
         case 6: //search item
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                          SEARCH ITEM");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          searchItemMain(inventory);
           break;
         case 7: //sort items
           System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
