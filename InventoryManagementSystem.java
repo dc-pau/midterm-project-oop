@@ -189,13 +189,23 @@ class Inventory{
 
     public void displayAll(Inventory inventory){
 
-    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
-    System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
+      System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+      System.out.printf("%-25s %-25s %-25s %-25s %-25s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
 
-    for(AbstractItems item : items){
-      String priceStr = String.format("%,.2f", item.getPrice());
-      System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+      for(AbstractItems item : items){
+        String priceStr = String.format("%,.2f", item.getPrice());
+        System.out.printf("%-25s %-25s %-25d %-25s %-25s%n", item.getId(), item.getName(), item.getQty(), priceStr, item.getCategory());
+      }
     }
+
+    public ArrayList<AbstractItems> getLowStockItems(){
+      ArrayList<AbstractItems> lowStocks = new ArrayList<>();
+      for(AbstractItems item : items){
+        if(item.getQty() <= 5){
+          lowStocks.add(item);
+        }
+      }
+      return lowStocks;
     }
   }
 
@@ -689,6 +699,14 @@ public class InventoryManagementSystem{
     }
   }
 
+  public static void lowStockItems(Inventory inventory){
+    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+    System.out.println("                                      DISPLAY LOW STOCK ITEMS");
+    System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+
+    ArrayList<AbstractItems> lowStocks = inventory.getLowStockItems();
+    displayArrayList(lowStocks);
+  }
   public static void main(String[] args){
     System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
 
@@ -736,9 +754,7 @@ public class InventoryManagementSystem{
           sortItemsMain(inventory);
           break;
         case 8: //display low stock items
-          System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-          System.out.println("                                      DISPLAY LOW STOCK ITEMS");
-          System.out.println("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+          lowStockItems(inventory);
           break;
         case 9:
           //exit
