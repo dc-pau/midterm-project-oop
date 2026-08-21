@@ -289,7 +289,7 @@ public class InventoryManagementSystem{
     return id;
   }
 
-  public static int qtyValidation(String prompt){
+  public static int qtyValidation(String prompt, int min){
     boolean isValidQty = false;
     int qty = 0;
 
@@ -310,10 +310,10 @@ public class InventoryManagementSystem{
       try{
         qty = Integer.parseInt(qtyStr);
 
-        if(qty >= 1){
+        if(qty >= min){
           isValidQty = true;
         }else{
-          System.out.println("Invalid input. Please enter a number greater than 0.");
+          System.out.printf("Invalid input. Please enter a number greater than or equal to %d.\n", min);
         }
       }catch(NumberFormatException e){
         System.out.println("Invalid input. You must enter an integer number.");
@@ -341,7 +341,7 @@ public class InventoryManagementSystem{
       }
 
       try{
-        price = Integer.parseInt(priceStr);
+        price = Double.parseDouble(priceStr);
 
         if(price >= 1){
           isValidPrice = true;
@@ -448,7 +448,7 @@ public class InventoryManagementSystem{
         ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
       }
       name = stringEmptyChecker("Enter Name: ", null, 0);
-      qty = qtyValidation("Enter Quantity: ");
+      qty = qtyValidation("Enter Quantity: ", 1);
       price = priceValidation("Enter Price: ");
 
       displayCurrentItem(cat, ID, name, qty, price);
@@ -480,10 +480,14 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(!idExistsMain(inventory, ID)){
+    if(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      return;
+    }
+    /*while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }
+    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -509,12 +513,15 @@ public class InventoryManagementSystem{
         int newQty = 0;
         while(!toUpdateQty){
           oldQty = item.getQty();
-          newQty = qtyValidation("\nEnter New Quantity: ");
+          newQty = qtyValidation("\nEnter New Quantity: ", 0);
 
-          char yOrN = charValidation("Are you sure you would like to update the item quantity? (y/n): ", 'y', 'n');
+          char yOrN = charValidation("Are you sure you want to update the item quantity? (y/n): ", 'y', 'n');
 
           if (yOrN == 'y') {
             toUpdateQty = true;
+          }else{
+            System.out.println("Item quantity update cancelled.");
+            return;
           }
         }
 
@@ -530,10 +537,13 @@ public class InventoryManagementSystem{
           oldPrice = item.getPrice();
           newPrice = priceValidation("\nEnter New Price: ");
 
-          char yOrN = charValidation("Are you sure you would like to update the item price? (y/n): ", 'y', 'n');
+          char yOrN = charValidation("Are you sure you want to update the item price? (y/n): ", 'y', 'n');
 
           if (yOrN == 'y') {
             toUpdatePrice = true;
+          }else{
+            System.out.println("Item price update cancelled.");
+            return;
           }
         }
         
@@ -555,10 +565,14 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(!idExistsMain(inventory, ID)){
+    if(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      return;
+    }
+    /*while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }
+    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -593,7 +607,7 @@ public class InventoryManagementSystem{
       return;
     }
 
-    String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
+    String itemCat = stringEmptyChecker("Enter Item Category (Clothing/Electronics/Entertainment): ", null, 0);
 
     if(!inventory.isCatExists(itemCat)){
       return;
@@ -638,10 +652,14 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(!idExistsMain(inventory, ID)){
+    if(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      return;
+    }
+    /*while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }
+    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
