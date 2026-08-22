@@ -106,7 +106,7 @@ class Inventory{
         return true;
       }
     }
-    System.out.printf("\nCategory %s does not exist!", itemCat);
+    System.out.printf("Category %s does not exist!\n\n", itemCat);
     return false;
   }
 
@@ -407,26 +407,26 @@ public class InventoryManagementSystem{
     System.out.println("                                - - - - - - - - - - - - - - - -");
     System.out.println("""
 
-                              Clothing                         Electronics                   Entertainment
+                              Clothing                       Electronics                   Entertainment
                   """);
     System.out.println("       - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"); 
     String itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
 
-    while(inventory.isCatExists(itemCat)){
+    while(!inventory.isCatExists(itemCat)){
+      itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
+    }
 
-      System.out.println(itemCat + " Category is found!");
-      System.out.println("\nPlease enter necessary information about the item:");
-      System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and three random numbers. (Ex. CL000111)");
+    System.out.println(itemCat + " Category is found!");
+    System.out.println("\nPlease enter necessary information about the item:");
+    System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and three random numbers. (Ex. CL000111)");
 
-      if(itemCat.equalsIgnoreCase("clothing")){
-        addItems(inventory, itemCat, "^CL000\\d{3}$");
-      }else if(itemCat.equalsIgnoreCase("electronics")){
-        addItems(inventory, itemCat, "^EL000\\d{3}$");
-      }else if(itemCat.equalsIgnoreCase("entertainment")){
-        addItems(inventory, itemCat, "^EN000\\d{3}$");
-      }
-      break;
-    }     
+    if(itemCat.equalsIgnoreCase("clothing")){
+      addItems(inventory, itemCat, "^CL000\\d{3}$");
+    }else if(itemCat.equalsIgnoreCase("electronics")){
+      addItems(inventory, itemCat, "^EL000\\d{3}$");
+    }else if(itemCat.equalsIgnoreCase("entertainment")){
+      addItems(inventory, itemCat, "^EN000\\d{3}$");
+    }    
   }
 
   public static boolean idExistsMain(Inventory inventory, String id){
@@ -480,14 +480,10 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    if(!idExistsMain(inventory, ID)){
-      System.out.println("Item with ID " + ID + " not found!");
-      return;
-    }
-    /*while(!idExistsMain(inventory, ID)){
+    while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }*/
+    }
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -565,14 +561,10 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    if(!idExistsMain(inventory, ID)){
-      System.out.println("Item with ID " + ID + " not found!");
-      return;
-    }
-    /*while(!idExistsMain(inventory, ID)){
+    while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }*/
+    }
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -609,8 +601,8 @@ public class InventoryManagementSystem{
 
     String itemCat = stringEmptyChecker("Enter Item Category (Clothing/Electronics/Entertainment): ", null, 0);
 
-    if(!inventory.isCatExists(itemCat)){
-      return;
+    while(!inventory.isCatExists(itemCat)){
+      itemCat = stringEmptyChecker("Enter Item Category: ", null, 0);
     }
 
     if(!inventory.catItems(itemCat).isEmpty()){
@@ -656,10 +648,7 @@ public class InventoryManagementSystem{
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
-    /*while(!idExistsMain(inventory, ID)){
-      System.out.println("Item with ID " + ID + " not found!");
-      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }*/
+
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -744,7 +733,7 @@ public class InventoryManagementSystem{
     displayArrayList(lowStocks);
   }
   public static void main(String[] args){
-    System.out.println("Simple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
+    System.out.println("\nSimple Inventory Management System by Ma. Angelica Pauleen R. De Chavez of C2A\n");
 
     Inventory inventory = new Inventory();
 
