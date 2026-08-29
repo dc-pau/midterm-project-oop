@@ -346,7 +346,7 @@ public class InventoryManagementSystem{
         if(price >= 1 && price <= 1000000){
           isValidPrice = true;
         }else{
-          System.out.println("Invalid input. Please enter a number greater than 0 and less than or equal to 1000000.");
+          System.out.println("Invalid input. Please enter a number ranging from 1 to 1000000.");
         }
       }catch(NumberFormatException e){
         System.out.println("Invalid input. You must enter an integer number.");
@@ -484,10 +484,8 @@ public class InventoryManagementSystem{
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
-    /*while(!idExistsMain(inventory, ID)){
-      System.out.println("Item with ID " + ID + " not found!");
-      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }*/
+
+
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -525,6 +523,11 @@ public class InventoryManagementSystem{
           }
         }
 
+        while(item.getQty() == newQty){
+          System.out.println("Item quantity is the same as the current quantity.");
+          return;
+        }
+
         item.setQty(newQty);
         System.out.printf("Quantity of Item %s is updated from %d to %d.\n", item.getName(), oldQty, newQty);
 
@@ -547,6 +550,11 @@ public class InventoryManagementSystem{
           }
         }
         
+        while(item.getPrice() == newPrice){
+          System.out.println("Item price is the same as the current price.");
+          return;
+        }
+
         item.setPrice(newPrice);
         System.out.printf("Price of Item %s is updated from %,.2f to %,.2f.\n", item.getName(), oldPrice, newPrice);
 
@@ -569,10 +577,6 @@ public class InventoryManagementSystem{
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
-    /*while(!idExistsMain(inventory, ID)){
-      System.out.println("Item with ID " + ID + " not found!");
-      ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
