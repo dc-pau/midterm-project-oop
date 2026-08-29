@@ -200,7 +200,7 @@ class Inventory{
 
     public void displayAll(Inventory inventory){
 
-      System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+      System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Item Name", "Quantity", "Price", "Category");
       System.out.printf("%-20s %-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
 
       for(AbstractItems item : items){
@@ -280,7 +280,7 @@ public class InventoryManagementSystem{
 
   public static String idValidation(String prompt, String id, String regex){
     if(!id.matches(regex)){
-      System.out.println("Invalid id format. Please use this format instead: First Two letter of the Category (CL/EN/EL) + three 0's and one unique number. (Ex. CL0001)");
+      System.out.println("Invalid id format. Please use this format instead: First two letter of the Category (CL/EL/EN) + three 0's and three random numbers. (Ex. CL000111)");
       id = stringEmptyChecker(prompt, regex, 1);
     }else{
       return id;
@@ -310,10 +310,10 @@ public class InventoryManagementSystem{
       try{
         qty = Integer.parseInt(qtyStr);
 
-        if(qty >= min){
+        if(qty >= min && qty <= 10000){
           isValidQty = true;
         }else{
-          System.out.printf("Invalid input. Please enter a number greater than or equal to %d.\n", min);
+          System.out.printf("Invalid input. Please enter a number greater than or equal to %d and less than or equal to 10000.\n", min);
         }
       }catch(NumberFormatException e){
         System.out.println("Invalid input. You must enter an integer number.");
@@ -343,10 +343,10 @@ public class InventoryManagementSystem{
       try{
         price = Double.parseDouble(priceStr);
 
-        if(price >= 1){
+        if(price >= 1 && price <= 1000000){
           isValidPrice = true;
         }else{
-          System.out.println("Invalid input. Please enter a number greater than 0.");
+          System.out.println("Invalid input. Please enter a number greater than 0 and less than or equal to 1000000.");
         }
       }catch(NumberFormatException e){
         System.out.println("Invalid input. You must enter an integer number.");
@@ -392,7 +392,7 @@ public class InventoryManagementSystem{
     System.out.println("                                         ITEM DETAILS");
     System.out.println("\n\t\t\t\t|Item Category:      " + cat); 
     System.out.println("\t\t\t\t|Item ID:            " + id); 
-    System.out.println("\t\t\t\t|Name:               " + name); 
+    System.out.println("\t\t\t\t|Item Name:          " + name); 
     System.out.println("\t\t\t\t|Item Quantity:      " + qty); 
     System.out.printf("\t\t\t\t|Item Price:         %,.2f%n", price); 
     System.out.println("                        - - - - - - - - - - - - - - - - - - - - - - - -");
@@ -418,14 +418,14 @@ public class InventoryManagementSystem{
 
     System.out.println(itemCat + " Category is found!");
     System.out.println("\nPlease enter necessary information about the item:");
-    System.out.println("NOTE: For ID format: First Two letter of the Category (CL/EN/EL) + three 0's and three random numbers. (Ex. CL000111)");
+    System.out.println("NOTE: For ID format: First two letter of the Category (CL/EL/EN) + three 0's and three random numbers. (Ex. CL000111)");
 
     if(itemCat.equalsIgnoreCase("clothing")){
-      addItems(inventory, itemCat, "^CL000\\d{3}$");
+      addItems(inventory, itemCat, "^(?i)CL000\\d{3}$");
     }else if(itemCat.equalsIgnoreCase("electronics")){
-      addItems(inventory, itemCat, "^EL000\\d{3}$");
+      addItems(inventory, itemCat, "^(?i)EL000\\d{3}$");
     }else if(itemCat.equalsIgnoreCase("entertainment")){
-      addItems(inventory, itemCat, "^EN000\\d{3}$");
+      addItems(inventory, itemCat, "^(?i)EN000\\d{3}$");
     }    
   }
 
@@ -447,9 +447,9 @@ public class InventoryManagementSystem{
         System.out.println("ID already exists. Please input another ID.");
         ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
       }
-      name = stringEmptyChecker("Enter Name: ", null, 0);
-      qty = qtyValidation("Enter Quantity: ", 1);
-      price = priceValidation("Enter Price: ");
+      name = stringEmptyChecker("Enter Item Name: ", null, 0);
+      qty = qtyValidation("Enter Quantity (1 - 10000): ", 1);
+      price = priceValidation("Enter Price (1 - 1000000): ");
 
       displayCurrentItem(cat, ID, name, qty, price);
 
@@ -480,10 +480,14 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(!idExistsMain(inventory, ID)){
+    if(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      return;
+    }
+    /*while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }
+    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -509,7 +513,7 @@ public class InventoryManagementSystem{
         int newQty = 0;
         while(!toUpdateQty){
           oldQty = item.getQty();
-          newQty = qtyValidation("\nEnter New Quantity: ", 0);
+          newQty = qtyValidation("\nEnter New Quantity (0 - 10000): ", 0);
 
           char yOrN = charValidation("Are you sure you want to update the item quantity? (y/n): ", 'y', 'n');
 
@@ -531,7 +535,7 @@ public class InventoryManagementSystem{
         double newPrice = 0;
         while(!toUpdatePrice){
           oldPrice = item.getPrice();
-          newPrice = priceValidation("\nEnter New Price: ");
+          newPrice = priceValidation("\nEnter New Price (1 - 1000000): ");
 
           char yOrN = charValidation("Are you sure you want to update the item price? (y/n): ", 'y', 'n');
 
@@ -561,10 +565,14 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    while(!idExistsMain(inventory, ID)){
+    if(!idExistsMain(inventory, ID)){
+      System.out.println("Item with ID " + ID + " not found!");
+      return;
+    }
+    /*while(!idExistsMain(inventory, ID)){
       System.out.println("Item with ID " + ID + " not found!");
       ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    }
+    }*/
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -606,7 +614,7 @@ public class InventoryManagementSystem{
     }
 
     if(!inventory.catItems(itemCat).isEmpty()){
-      System.out.printf("\n%-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price");
+      System.out.printf("\n%-20s %-20s %-20s %-20s%n", "Item ID", "Item Name", "Quantity", "Price");
       System.out.printf("%-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------");
 
       ArrayList <AbstractItems> display = inventory.getItemsByCat(itemCat);
@@ -648,7 +656,6 @@ public class InventoryManagementSystem{
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
-
 
     AbstractItems item = inventory.getItemByID(ID);
 
@@ -715,7 +722,7 @@ public class InventoryManagementSystem{
       return;
     }
 
-    System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Name", "Quantity", "Price", "Category");
+    System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Item Name", "Quantity", "Price", "Category");
     System.out.printf("%-20s %-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------", "-------------");
 
     for(AbstractItems item : sorted){
