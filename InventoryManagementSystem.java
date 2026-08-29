@@ -44,7 +44,6 @@ abstract class AbstractItems{
   }
 
   public abstract String getCategory();
-  
 }
 
 //clothing class
@@ -110,7 +109,41 @@ class Inventory{
     return false;
   }
 
-  public ArrayList<AbstractItems> catItems(String itemCat){
+  //check if id already exists
+  public boolean idExists(String id){
+    for(AbstractItems item : items){
+      if(item.getId().equalsIgnoreCase(id)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  //add items
+  public void addItem(AbstractItems item, String id){
+    System.out.println("Item added successfully!");
+    items.add(item);
+    }
+    
+    //get item using id
+    public AbstractItems getItemByID(String id){
+      for(AbstractItems item : items){
+        if(item.getId().equalsIgnoreCase(id)){
+          return item;
+        }
+      }
+      return null;
+    }
+
+    //remove item using id
+    public AbstractItems removeItemByID(String id){
+      AbstractItems item = getItemByID(id);
+      items.remove(item);
+      return item;
+    }
+
+    //store items by category
+    public ArrayList<AbstractItems> catItems(String itemCat){
     ArrayList<AbstractItems> catItems = new ArrayList<>();
 
     for(AbstractItems item : items){
@@ -121,68 +154,17 @@ class Inventory{
     return catItems;
   }
 
-  //add items
-  public void addItem(AbstractItems item, String id){
-    //checks for duplicates using item id
-    for(AbstractItems itemHolder : items){
-      if(itemHolder.getId().equalsIgnoreCase(id)){
-        System.out.printf("Item with %s id already exists. Please input another item.\n", id);
-      }
-    }
-    System.out.println("Item added successfully!");
-    items.add(item);
-    }
-
-    //check if id already exists
-    public boolean idExists(String id){
-      for(AbstractItems item : items){
-        if(item.getId().equalsIgnoreCase(id)){
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public AbstractItems getItemByID(String id){
-      for(AbstractItems item : items){
-        if(item.getId().equalsIgnoreCase(id)){
-          return item;
-        }
-      }
-      return null;
-    }
-
-    public AbstractItems removeItemByID(String id){
-      AbstractItems item = getItemByID(id);
-      if(item != null){
-        items.remove(item);
-      }
-      return item;
-    }
-
-    public ArrayList<AbstractItems> getItemsByCat(String cat){
-      ArrayList<AbstractItems> absItem = new ArrayList<>();
-      for(AbstractItems item : items){
-        if(item.getCategory().equalsIgnoreCase(cat)){
-          absItem.add(item);
-        }
-      }
-      return absItem;
-    }
-
+    //store items that is sorted based on the preference of the user
     public ArrayList<AbstractItems> getSortedItems(char sort, char order){
       ArrayList<AbstractItems> sortItems = new ArrayList<>(items);
 
-      //set default -- and for initializing
+      //set default and for initializing
+      //sort by qty
       Comparator<AbstractItems> comparator = Comparator.comparingInt(AbstractItems::getQty);
 
-      switch(sort){
-        case 'a': //sort by qty
-          comparator = Comparator.comparingInt(AbstractItems::getQty);
-          break;
-        case 'b': //sort by price
-          comparator = Comparator.comparingDouble(AbstractItems::getPrice);
-          break;
+      //sort by price
+      if(sort == 'b'){
+        comparator = Comparator.comparingDouble(AbstractItems::getPrice);
       }
 
       //sort by descending
@@ -194,10 +176,12 @@ class Inventory{
       return sortItems;
     }
 
+    //check if inventory is empty
     public boolean isEmpty(){
       return items.isEmpty();
     }
 
+    //display everything
     public void displayAll(Inventory inventory){
 
       System.out.printf("\n%-20s %-20s %-20s %-20s %-20s%n", "Item ID", "Item Name", "Quantity", "Price", "Category");
@@ -209,6 +193,7 @@ class Inventory{
       }
     }
 
+    //store low stock items
     public ArrayList<AbstractItems> getLowStockItems(){
       ArrayList<AbstractItems> lowStocks = new ArrayList<>();
       for(AbstractItems item : items){
@@ -429,10 +414,6 @@ public class InventoryManagementSystem{
     }    
   }
 
-  public static boolean idExistsMain(Inventory inventory, String id){
-    return inventory.idExists(id);
-  }
-
   public static void addItems(Inventory inventory, String cat, String regex){
     String ID = " ";
     String name = " ";
@@ -443,7 +424,7 @@ public class InventoryManagementSystem{
     while(!isCorrect){
       //check if ID exist before continuing
       ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
-      while(idExistsMain(inventory, ID)){
+      while(inventory.idExists(ID)){
         System.out.println("ID already exists. Please input another ID.");
         ID = stringEmptyChecker("\nEnter Item ID: ", regex, 1);
       }
@@ -480,7 +461,7 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    if(!idExistsMain(inventory, ID)){
+    if(!inventory.idExists(ID)){
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
@@ -506,24 +487,19 @@ public class InventoryManagementSystem{
     switch(upd){
       case 'a'://qty
 
-        boolean toUpdateQty = false;
         int oldQty = 0;
         int newQty = 0;
-        while(!toUpdateQty){
-          oldQty = item.getQty();
-          newQty = qtyValidation("\nEnter New Quantity (0 - 10000): ", 0);
+        oldQty = item.getQty();
+        newQty = qtyValidation("\nEnter New Quantity (0 - 10000): ", 0);
 
-          char yOrN = charValidation("Are you sure you want to update the item quantity? (y/n): ", 'y', 'n');
+        char yOrNQty = charValidation("Are you sure you want to update the item quantity? (y/n): ", 'y', 'n');
 
-          if (yOrN == 'y') {
-            toUpdateQty = true;
-          }else{
-            System.out.println("Item quantity update cancelled.");
-            return;
-          }
+        if (yOrNQty == 'n') {
+          System.out.println("Item quantity update cancelled.");
+          return;
         }
 
-        while(item.getQty() == newQty){
+        if(item.getQty() == newQty){
           System.out.println("Item quantity is the same as the current quantity.");
           return;
         }
@@ -533,31 +509,26 @@ public class InventoryManagementSystem{
 
         break;
       case 'b'://price
-        boolean toUpdatePrice = false;
         double oldPrice = 0;
         double newPrice = 0;
-        while(!toUpdatePrice){
+        
           oldPrice = item.getPrice();
           newPrice = priceValidation("\nEnter New Price (1 - 1000000): ");
 
-          char yOrN = charValidation("Are you sure you want to update the item price? (y/n): ", 'y', 'n');
+          char yOrNPrice = charValidation("Are you sure you want to update the item price? (y/n): ", 'y', 'n');
 
-          if (yOrN == 'y') {
-            toUpdatePrice = true;
-          }else{
+          if (yOrNPrice == 'n') {
             System.out.println("Item price update cancelled.");
             return;
           }
-        }
         
-        while(item.getPrice() == newPrice){
+        if(item.getPrice() == newPrice){
           System.out.println("Item price is the same as the current price.");
           return;
         }
 
         item.setPrice(newPrice);
         System.out.printf("Price of Item %s is updated from %,.2f to %,.2f.\n", item.getName(), oldPrice, newPrice);
-
         break;
     }
   }
@@ -573,7 +544,7 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    if(!idExistsMain(inventory, ID)){
+    if(!inventory.idExists(ID)){
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
@@ -583,19 +554,10 @@ public class InventoryManagementSystem{
     System.out.println("ID found!");
     displayCurrentItem(item.getCategory(), item.getId(), item.getName(), item.getQty(), item.getPrice());
 
-    boolean isRemoved = false;
-    while(!isRemoved){
-      char rmv = charValidation("Are you sure you want to remove this item? (y/n): ", 'y', 'n');
-      if (rmv == 'y') {
-        isRemoved = true;
-      }else{
-        break;
-      }
-    }
-
-    if(isRemoved){
+    char rmv = charValidation("Are you sure you want to remove this item? (y/n): ", 'y', 'n');
+    if (rmv == 'y') {
       inventory.removeItemByID(ID);
-      System.out.println("Item " + item.getName() + " has been removed from the inventory'");
+    System.out.println("Item " + item.getName() + " has been removed from the inventory'");
     }else{
       System.out.println("Item is not removed.");
     }
@@ -621,7 +583,7 @@ public class InventoryManagementSystem{
       System.out.printf("\n%-20s %-20s %-20s %-20s%n", "Item ID", "Item Name", "Quantity", "Price");
       System.out.printf("%-20s %-20s %-20s %-20s%n", "-------------", "-------------", "-------------", "-------------");
 
-      ArrayList <AbstractItems> display = inventory.getItemsByCat(itemCat);
+      ArrayList <AbstractItems> display = inventory.catItems(itemCat);
       for(AbstractItems item : display){
         String priceStr = String.format("%,.2f", item.getPrice());
         System.out.printf("%-20s %-20s %-20d %-20s%n", item.getId(), item.getName(), item.getQty(), priceStr);
@@ -656,7 +618,7 @@ public class InventoryManagementSystem{
     }
 
     String ID = stringEmptyChecker("\nEnter Item ID: ", null, 0);
-    if(!idExistsMain(inventory, ID)){
+    if(!inventory.idExists(ID)){
       System.out.println("Item with ID " + ID + " not found!");
       return;
     }
